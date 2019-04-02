@@ -14,6 +14,10 @@ import (
 )
 
 func httpDeploy(jar *Jar) {
+	jar.groupId = confirm("groupId", jar.groupId, silence)
+	jar.artifactId = confirm("artifactId", jar.artifactId, silence)
+	jar.version = confirm("version", jar.version, silence)
+	
 	deployJarFile(jar)
 	deployPom(jar)
 }
@@ -60,7 +64,7 @@ func deployPom(jar *Jar) {
 		jar.version,
 		jar.artifactId + "-" + jar.version + ".pom"}, "/")
 	putString(url, body)
-	
+
 	//------------md5--------------
 	bb := bytes.NewBufferString(body).Bytes()
 	url = strings.Join([]string{maven_url + strings.Replace(jar.groupId, ".", "/", -1),
@@ -68,7 +72,7 @@ func deployPom(jar *Jar) {
 		jar.version,
 		jar.artifactId + "-" + jar.version + ".pom.md5"}, "/")
 	putString(url, md5string(bb))
-	
+
 	//------------sha1--------------
 	url = strings.Join([]string{maven_url + strings.Replace(jar.groupId, ".", "/", -1),
 		jar.artifactId,
